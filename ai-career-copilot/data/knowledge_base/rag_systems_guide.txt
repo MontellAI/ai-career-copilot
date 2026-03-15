@@ -1,0 +1,64 @@
+RAG Systems — Technical Skill Guide
+
+WHAT IS RAG
+Retrieval-Augmented Generation (RAG) is the technique of providing an LLM with retrieved context at inference time rather than relying on what the model learned during training. The model answers questions based on documents you give it, not just its weights.
+
+This solves the core problem with raw LLMs: they hallucinate, they go stale, and they don't know your specific domain.
+
+THE PIPELINE
+1. INGESTION (offline)
+   - Load source documents (PDFs, web pages, databases)
+   - Split into chunks (typically 500–1000 tokens)
+   - Embed each chunk using an embedding model
+   - Store embeddings + metadata in a vector database
+
+2. RETRIEVAL (online)
+   - Embed the user query using the same embedding model
+   - Run nearest-neighbor search against the vector store
+   - Return top-k most semantically similar chunks
+
+3. GENERATION
+   - Stuff retrieved chunks into the prompt as context
+   - Ask the LLM to answer based on the provided context
+   - Return response with source citations
+
+CHUNKING STRATEGIES
+- Fixed-size: Simple, consistent, loses sentence/paragraph coherence
+- Recursive character splitting: Respects natural text boundaries, recommended default
+- Semantic chunking: Splits by meaning shifts, better for dense docs, more expensive
+- Document-specific: Use custom splitters for code, tables, structured data
+
+Rule of thumb: 800 tokens with 100 token overlap is a good starting point.
+
+EMBEDDING MODELS
+- OpenAI text-embedding-ada-002: Solid all-around, cheap, fast
+- text-embedding-3-small / 3-large: Better performance, newer
+- Open source: all-MiniLM-L6-v2 (fast, decent), BGE models (strong multilingual)
+
+VECTOR STORES
+- FAISS: Local, fast, no infrastructure — use for development and prototypes
+- Pinecone: Managed, scales, good metadata filtering — use for production
+- Chroma: Open source, good LangChain integration
+- Weaviate: Strong for hybrid search (keyword + semantic)
+
+RETRIEVAL QUALITY IMPROVEMENTS
+- Re-ranking: Use a cross-encoder to re-score top-k results before passing to LLM
+- Hybrid search: Combine BM25 keyword search with semantic search
+- Query expansion: Have the LLM rephrase the query before retrieval
+- Metadata filtering: Pre-filter by category, date, source before semantic search
+- HyDE: Generate a hypothetical answer, then retrieve based on that
+
+EVALUATION (RAGAS)
+RAGAS measures RAG quality on four axes:
+- Faithfulness: Is the answer grounded in the retrieved context?
+- Answer relevancy: Does the answer address the question?
+- Context precision: Is the retrieved context relevant?
+- Context recall: Did we retrieve all the necessary context?
+
+Run RAGAS on a test set before shipping a RAG system to production.
+
+COMMON FAILURE MODES
+- Retrieval misses: Query embedding doesn't match chunk embeddings → fix chunking or query expansion
+- Context stuffing: Too many chunks confuse the LLM → reduce k, use re-ranking
+- Hallucination despite retrieval: LLM ignores context → stronger system prompt, lower temperature
+- Stale index: Knowledge base not updated → implement incremental ingestion pipeline

@@ -1,0 +1,47 @@
+LLM Engineer Role Guide — 2025
+
+ROLE OVERVIEW
+LLM Engineers build systems that use large language models in production. The role sits between traditional ML engineering and software engineering, with a heavy focus on prompt design, retrieval systems, and making AI reliable at scale.
+
+This is distinct from ML Research or Data Science. You're not training models from scratch — you're building systems around them.
+
+CORE RESPONSIBILITIES
+- Design and implement RAG pipelines (chunking, embedding, retrieval, re-ranking)
+- Build and evaluate prompt templates for production reliability
+- Integrate LLM APIs (OpenAI, Anthropic, Mistral) into backend services
+- Fine-tune open-source models (LLaMA, Mistral) using LoRA / PEFT
+- Instrument evaluation pipelines using RAGAS, ARES, or custom metrics
+- Deploy models and inference endpoints on AWS / GCP (SageMaker, Vertex)
+- Monitor LLM behavior in production (hallucination rates, latency, cost)
+
+MUST-HAVE SKILLS
+1. Python — you need to be fluent. Not "familiar", fluent.
+2. LangChain or LlamaIndex — orchestration is the backbone of every RAG system
+3. Vector databases — FAISS for local, Pinecone or Weaviate for production
+4. OpenAI / Anthropic API usage — including function calling, structured outputs, embeddings
+5. Prompt engineering — system prompts, few-shot examples, chain-of-thought
+6. Basic cloud (AWS preferred) — S3, Lambda, EC2, SageMaker basics
+
+GOOD-TO-HAVE
+- Fine-tuning: LoRA, QLoRA, PEFT with HuggingFace Transformers
+- RAGAS for RAG evaluation
+- LangSmith or similar for LLM observability
+- FastAPI for serving endpoints
+- Docker + basic CI/CD
+
+COMMON HIRING MISTAKE
+Candidates list "machine learning" broadly and can't speak specifically to LLM system design. Interviewers ask: "How would you improve retrieval quality in a RAG pipeline?" If you can't answer that concretely, you're not ready.
+
+REALISTIC TIMELINE
+Starting from solid Python fundamentals:
+- 3 months: Can build a working RAG app, understands embedding + retrieval
+- 6 months: Can evaluate and improve a RAG system, has a deployed project
+- 9 months: Ready to interview for junior-to-mid LLM Engineer roles
+
+JOB MARKET (2025)
+Demand is high and accelerating. Most companies hiring LLM engineers are looking for:
+- Production RAG experience
+- At least one deployed AI project (not just notebooks)
+- Understanding of evaluation and reliability (not just demos)
+
+Salary range: $130k–$200k+ depending on seniority and company stage.

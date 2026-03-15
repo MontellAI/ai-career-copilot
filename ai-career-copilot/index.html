@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Career Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --surface: #0f0f1a;
+    --border: #1e1e30;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #4af0c4;
+    --accent2: #7b5cf0;
+    --accent3: #f05c7b;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,240,196,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,240,196,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(9,9,15,0.9);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  nav .inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  .logo span { color: var(--muted); }
+  nav a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+    margin-left: 32px;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 100px 0 80px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .eyebrow::before {
+    content: '//';
+    margin-right: 8px;
+    color: var(--muted);
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  h1 .dim { color: var(--muted); }
+  h1 .hi { color: var(--accent); }
+  .hero-sub {
+    font-family: var(--sans);
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 28px 0 48px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .tag.hi { border-color: rgba(74,240,196,0.3); color: var(--accent); }
+
+  .hero-img {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: block;
+    margin-top: 64px;
+  }
+
+  /* SECTION */
+  section {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  h2 .accent { color: var(--accent); }
+  p.body {
+    color: var(--muted);
+    max-width: 640px;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  p.body strong { color: var(--text); font-weight: 500; }
+
+  /* SCREENSHOT GRID */
+  .screenshot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .screenshot-item {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .screenshot-item:hover {
+    border-color: rgba(74,240,196,0.4);
+  }
+  .screenshot-item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .screenshot-item:hover img {
+    transform: scale(1.02);
+  }
+  .screenshot-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(transparent, rgba(9,9,15,0.95));
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .screenshot-item.wide {
+    grid-column: span 2;
+  }
+
+  /* LIGHTBOX */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(9,9,15,0.95);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 80px rgba(74,240,196,0.1);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* RAG FLOW DIAGRAM */
+  .rag-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 48px 0 32px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .rag-step {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    min-width: 140px;
+    background: var(--surface);
+  }
+  .rag-step .step-icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .rag-step .step-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    display: block;
+  }
+  .rag-step .step-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    display: block;
+  }
+  .rag-step.highlight {
+    border-color: rgba(123,92,240,0.5);
+    background: rgba(123,92,240,0.08);
+  }
+  .rag-step.highlight .step-name { color: #a88af0; }
+  .rag-arrow {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 18px;
+    padding: 0 8px;
+  }
+
+  /* TECH STACK */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .stack-item {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+  .stack-item .layer {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .stack-item .tool {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .stack-item .desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .stack-item.accent-green { border-color: rgba(74,240,196,0.2); }
+  .stack-item.accent-purple { border-color: rgba(123,92,240,0.2); }
+
+  /* WHAT I LEARNED */
+  .lessons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .lesson {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+  .lesson-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .lesson h3 {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lesson p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero > * {
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero .eyebrow { animation-delay: 0.1s; }
+  .hero h1 { animation-delay: 0.2s; }
+  .hero .hero-sub { animation-delay: 0.3s; }
+  .hero .tag-row { animation-delay: 0.4s; }
+
+  @media (max-width: 640px) {
+    .screenshot-grid { grid-template-columns: 1fr; }
+    .screenshot-item.wide { grid-column: span 1; }
+    .lessons { grid-template-columns: 1fr; }
+    .rag-flow { flex-direction: column; }
+    .rag-arrow { transform: rotate(90deg); }
+    nav .links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="inner">
+      <div class="logo">career<span>.</span>copilot <span>/ v1.0</span></div>
+      <div class="links">
+        <a href="#overview">Overview</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#stack">Stack</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <section class="hero" style="border-top: none; padding-top: 80px;" id="overview">
+    <div class="eyebrow">Project — AI Engineering</div>
+    <h1><span class="hi">AI Career</span><br><span class="dim">Copilot</span></h1>
+    <p class="hero-sub">
+      LLM-powered career guidance built on <strong>RAG + Vector Search</strong>. 
+      Analyzes your skill profile, retrieves context from a curated knowledge base, 
+      and generates personalized roadmaps — grounded in real data, not generic advice.
+    </p>
+    <div class="tag-row">
+      <span class="tag hi">RAG</span>
+      <span class="tag hi">LangChain</span>
+      <span class="tag hi">GPT-4</span>
+      <span class="tag">FAISS</span>
+      <span class="tag">Pinecone</span>
+      <span class="tag">Streamlit</span>
+      <span class="tag">OpenAI API</span>
+      <span class="tag">Prompt Engineering</span>
+      <span class="tag">Python</span>
+    </div>
+    <img src="assets/architecture.jpeg" alt="AI Career Copilot Architecture" class="hero-img" onclick="openLightbox(this.src)">
+  </section>
+
+  <section id="architecture">
+    <div class="section-label">01 — How It Works</div>
+    <h2>The <span class="accent">RAG pipeline</span>,<br>end to end</h2>
+    <p class="body">
+      Generic chatbots answer from training weights — static, stale, and easily hallucinated. 
+      This system retrieves <strong>relevant context at inference time</strong>: job trend documents, 
+      skill guides, and curated roadmaps are embedded, stored in a vector database, 
+      and pulled dynamically to ground every response.
+    </p>
+
+    <div class="rag-flow">
+      <div class="rag-step">
+        <div class="step-icon">📝</div>
+        <span class="step-name">USER QUERY</span>
+        <span class="step-sub">Goals + Skills</span>
+      </div>
+      <div class="rag-arrow">→</div>
+      <div class="rag-step">
+        <div class="step-icon">🔍</div>
+        <span class="step-name">SEMANTIC SEARCH</span>
+        <span class="step-sub">FAISS / Pinecone</span>
+      </div>
+      <div class="rag-arrow">→</div>
+      <div class="rag-step">
+        <div class="step-icon">📄</div>
+        <span class="step-name">RETRIEVE DOCS</span>
+        <span class="step-sub">Top-k chunks</span>
+      </div>
+      <div class="rag-arrow">→</div>
+      <div class="rag-step highlight">
+        <div class="step-icon">🧠</div>
+        <span class="step-name">LLM REASONING</span>
+        <span class="step-sub">GPT-4 + context</span>
+      </div>
+      <div class="rag-arrow">→</div>
+      <div class="rag-step">
+        <div class="step-icon">💡</div>
+        <span class="step-name">PERSONALIZED ADVICE</span>
+        <span class="step-sub">Grounded output</span>
+      </div>
+    </div>
+
+    <img src="assets/rag_workflow.jpeg" alt="RAG Workflow Diagram" style="width:100%; border-radius:4px; border:1px solid var(--border); margin-top:16px; cursor:pointer;" onclick="openLightbox(this.src)">
+  </section>
+
+  <section id="screenshots">
+    <div class="section-label">02 — Interface</div>
+    <h2>Built to <span class="accent">actually use</span>,<br>not just demo</h2>
+    <p class="body">
+      The Streamlit frontend keeps it simple: input your profile, get back a 
+      skill gap analysis with scored recommendations and a phased learning roadmap. 
+      Sources are shown — you can see exactly which documents grounded the response.
+    </p>
+
+    <div class="screenshot-grid" style="margin-top: 40px;">
+      <div class="screenshot-item wide">
+        <img src="assets/dashboard.jpeg" alt="Career Dashboard" onclick="openLightbox(this.src)">
+        <div class="screenshot-caption">career_dashboard — skill gap analysis + roadmap overview</div>
+      </div>
+      <div class="screenshot-item">
+        <img src="assets/skill_gap.jpeg" alt="Skill Gap Analysis" onclick="openLightbox(this.src)">
+        <div class="screenshot-caption">skill_gap_analysis — scored against role requirements</div>
+      </div>
+      <div class="screenshot-item">
+        <img src="assets/roadmap.jpeg" alt="Learning Roadmap" onclick="openLightbox(this.src)">
+        <div class="screenshot-caption">learning_roadmap — 9-month phased plan</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="section-label">03 — Tech Stack</div>
+    <h2>The <span class="accent">stack</span></h2>
+    <div class="stack-grid">
+      <div class="stack-item accent-green">
+        <div class="layer">LLM</div>
+        <div class="tool">GPT-4</div>
+        <div class="desc">OpenAI API — structured outputs, function calling</div>
+      </div>
+      <div class="stack-item accent-purple">
+        <div class="layer">Orchestration</div>
+        <div class="tool">LangChain</div>
+        <div class="desc">RAG chains, retrieval QA, prompt templates</div>
+      </div>
+      <div class="stack-item">
+        <div class="layer">Vector Store</div>
+        <div class="tool">FAISS + Pinecone</div>
+        <div class="desc">Local dev + production hosted index</div>
+      </div>
+      <div class="stack-item">
+        <div class="layer">Embeddings</div>
+        <div class="tool">ada-002</div>
+        <div class="desc">OpenAI text-embedding-ada-002</div>
+      </div>
+      <div class="stack-item">
+        <div class="layer">Frontend</div>
+        <div class="tool">Streamlit</div>
+        <div class="desc">Progress bars, navigation, session state</div>
+      </div>
+      <div class="stack-item">
+        <div class="layer">Language</div>
+        <div class="tool">Python 3.10</div>
+        <div class="desc">Async, type hints, environment management</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">04 — What I Learned</div>
+    <h2>Honest <span class="accent">takeaways</span></h2>
+    <div class="lessons">
+      <div class="lesson">
+        <div class="lesson-num">01</div>
+        <h3>Chunking strategy matters more than model choice</h3>
+        <p>Switched from fixed-size to recursive character splitting and saw a noticeable improvement in retrieval quality — before touching the LLM at all. The bottleneck in RAG is usually retrieval, not generation.</p>
+      </div>
+      <div class="lesson">
+        <div class="lesson-num">02</div>
+        <h3>Prompt structure is engineering, not guesswork</h3>
+        <p>Explicit output format instructions, grounding reminders ("answer only from the provided context"), and role framing each measurably changed response quality. Tracking changes systematically revealed which prompts actually helped.</p>
+      </div>
+      <div class="lesson">
+        <div class="lesson-num">03</div>
+        <h3>FAISS locally, Pinecone for real scale</h3>
+        <p>FAISS is excellent for development — fast, no infrastructure. But the lack of metadata filtering became a wall when the knowledge base grew. Pinecone's filter-before-retrieve pattern solved this cleanly.</p>
+      </div>
+      <div class="lesson">
+        <div class="lesson-num">04</div>
+        <h3>RAG evaluation is where the real work is</h3>
+        <p>Demos don't tell you if your system is good. RAGAS gives you faithfulness and context recall scores. The pipeline didn't feel production-ready until I had a repeatable eval suite showing where it was failing.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <p>AI Career Copilot — Built with Python, LangChain, OpenAI</p>
+      <div class="footer-links">
+        <a href="https://github.com/yourusername/ai-career-copilot">GitHub</a>
+        <a href="README.md">README</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-close">[ close ]</div>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+</body>
+</html>
